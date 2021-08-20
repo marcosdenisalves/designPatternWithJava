@@ -1,21 +1,27 @@
 package br.com.alura.loja;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
-import br.com.alura.loja.orcamento.ItemOrcamento;
-import br.com.alura.loja.orcamento.Orcamento;
+import br.com.alura.loja.pedido.GerarPedido;
+import br.com.alura.loja.pedido.GerarPedidoHandler;
+import br.com.alura.loja.pedido.acao.EnviarEmailPedido;
+import br.com.alura.loja.pedido.acao.LogDePedido;
+import br.com.alura.loja.pedido.acao.SalvarPedidoNoBanco;
 
 public class Main {
 
 	public static void main(String[] args) {
-		Orcamento antigo = new Orcamento();
-		antigo.adicionarItem(new ItemOrcamento(new BigDecimal("200")));
-		antigo.reprovar();
+		String cliente = "Ana da Silva";
+		BigDecimal valorOrcamento = new BigDecimal("745.99");
+		int quantidadeItens = 3;
 		
-		Orcamento novo = new Orcamento(); 
-		novo.adicionarItem(new ItemOrcamento(new BigDecimal("500")));
-		novo.adicionarItem(antigo);
+		GerarPedido gerador = new GerarPedido(cliente, valorOrcamento, quantidadeItens);
+		GerarPedidoHandler handler = new GerarPedidoHandler(Arrays.asList(
+				new EnviarEmailPedido(),
+				new SalvarPedidoNoBanco(),
+				new LogDePedido()));
 		
-		System.out.println(novo.getValor());
+		handler.execute(gerador);
 	}
 }
